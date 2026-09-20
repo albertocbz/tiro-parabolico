@@ -70,7 +70,7 @@ def generar_escenario(
       zorder=10,
   )
   axis.imshow(
-      soporte, extent=[x_0 - 10, x_0 + 10, y_0 - 22, y_0 + 2], zorder=11
+      soporte, extent=[x_0 - 8, x_0 + 8, y_0 - 22, y_0 + 2], zorder=11
   )
   if mostrar_bola_en_vuelo and x_anim is not None:
     axis.plot(
