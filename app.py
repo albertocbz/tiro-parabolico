@@ -11,7 +11,7 @@ st.write(
     "Ajusta los parámetros con los controles de la izquierda y haz clic en"
     " **Disparar**."
 )
-st.sidebar.header("🎛Parámetros del Cañón")
+st.sidebar.header("Parámetros del Cañón")
 v_0 = st.sidebar.slider("Velocidad (m/s)", 10, 60, 60, 1)
 theta = st.sidebar.slider("Ángulo (°)", -90, 90, 45, 1)
 x_0 = st.sidebar.slider("Posición X", 14, 50, 50, 1)
