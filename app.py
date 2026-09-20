@@ -106,7 +106,7 @@ if st.session_state.animando:
     )
     contenedor_grafico.pyplot(fig)
     plt.close(fig)
-    time.sleep(0.03)
+    time.sleep(0.01)
 else:
   fig = generar_escenario()
   contenedor_grafico.pyplot(fig)
