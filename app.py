@@ -97,7 +97,7 @@ if st.session_state.animando:
   v_x = v_0 * np.cos(rad)
   v_y = v_0 * np.sin(rad)
   t_max = (v_y + np.sqrt(v_y ** 2 + 2 * g * y_0)) / g
-  t = np.linspace(0, t_max, 60)
+  t = np.linspace(0, t_max, 30)
   x_trayectoria = x_0 + v_x * t
   y_trayectoria = y_0 + v_y * t - 0.5 * g * t ** 2
   for i in range(1, len(x_trayectoria)):
