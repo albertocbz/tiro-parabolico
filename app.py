@@ -20,7 +20,7 @@ x_0 = st.sidebar.slider("Posición X", 14, 50, 50, 1)
 y_0 = st.sidebar.slider("Altura Y", 14, 80, 80, 1)
 g = 9.8
 
-
+# Carga de imágenes optimizada con caché
 @st.cache_data
 def cargar_imagenes():
     try:
@@ -53,7 +53,7 @@ if disparar:
 
 contenedor_grafico = st.empty()
 
-@st.cache_resource
+# --- CREACIÓN DE LA FIGURA BASE ---
 def crear_figura_base(x_0, y_0, theta):
     fig, axis = plt.subplots(figsize=(8, 4.5))
     fig.patch.set_facecolor("#1e1e1e")
@@ -65,10 +65,10 @@ def crear_figura_base(x_0, y_0, theta):
     axis.set_xlim([0, 500])
     axis.set_ylim([0, 280])
     
-
+    # Fondo
     axis.imshow(fondo, extent=[0, 500, 0, 280], zorder=0)
     
-
+    # Suelo / Colina
     x_suelo = np.linspace(0, 500, 500)
     canon_size = 500 * 0.08
     altura_colina = y_0 - canon_size / 3
@@ -80,7 +80,7 @@ def crear_figura_base(x_0, y_0, theta):
     )
     axis.fill_between(x_suelo, 0, y_suelo, zorder=2, color="olivedrab")
     
-
+    # Cañón y Soporte
     canon_rotado = canon.rotate(theta, expand=True)
     canon_largo = 30
     ancho_original, alto_original = canon.size
@@ -97,15 +97,13 @@ def crear_figura_base(x_0, y_0, theta):
         soporte, extent=[x_0 - 8, x_0 + 8, y_0 - 22, y_0 + 2], zorder=11
     )
     
-
-    (linea_trayectoria,) = axis.imshow(np.zeros((10, 10, 4)), extent=[0,0,0,0], zorder=4) # placeholder o usar plot
-    # Mejor usar plot para la línea y imshow para la bola:
-    (linea_traj,) = axis.plot([], [], color="blue", linewidth=3, linestyle="--", zorder=4)
-
-    bola_im = axis.imshow(bola, extent=[-20, -10, -20, -10], zorder=9)
+    # Objeto de la trayectoria (línea vacía inicialmente)
+    (linea_traj,) = axis.plot([], [], color="cyan", linewidth=2.5, linestyle="--", zorder=4)
+    
+    # Objeto de la bola (fuera de pantalla inicialmente)
+    bola_im = axis.imshow(bola, extent=[-50, -40, -50, -40], zorder=9)
     
     return fig, axis, linea_traj, bola_im
-
 
 fig, axis, linea_traj, bola_im = crear_figura_base(x_0, y_0, theta)
 
@@ -114,15 +112,14 @@ if st.session_state.animando:
     v_x = v_0 * np.cos(rad)
     v_y = v_0 * np.sin(rad)
     t_max = (v_y + np.sqrt(v_y ** 2 + 2 * g * y_0)) / g
-    t = np.linspace(0, t_max, 35) # Un poco más fluido
+    
+    # Puntos de la animación
+    t = np.linspace(0, t_max, 40)
     x_trayectoria = x_0 + v_x * t
     y_trayectoria = y_0 + v_y * t - 0.5 * g * t ** 2
     
-
-    contenedor_grafico.pyplot(fig)
-    
     for i in range(1, len(x_trayectoria)):
-        # Actualizamos únicamente los datos de la línea y la posición de la bola
+        # Actualizar únicamente datos dinámicos sin redibujar el fondo
         linea_traj.set_data(x_trayectoria[:i], y_trayectoria[:i])
         
         bx = x_trayectoria[i]
@@ -130,9 +127,10 @@ if st.session_state.animando:
         bola_im.set_extent([bx - 6, bx + 6, by - 6, by + 6])
         
         contenedor_grafico.pyplot(fig)
-        time.sleep(0.02)
+        time.sleep(0.01)
+    
+    st.session_state.animando = False
+    plt.close(fig)
 else:
-
-    linea_traj.set_data([], [])
-    bola_im.set_extent([-20, -10, -20, -10])
     contenedor_grafico.pyplot(fig)
+    plt.close(fig)
